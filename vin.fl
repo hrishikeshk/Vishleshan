@@ -1,0 +1,56 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#include "vin.tab.h"
+
+void strc(char* src, char* tar){
+
+	int src_len = strlen(src);
+	int z = 0;
+	for(z = 0; z < src_len; z++){
+		if(z == 0 || z == (src_len-1)){
+		
+		}
+		else{
+			tar[z-1] = src[z];
+		}
+	}
+	tar[src_len-2] = '\0';
+}
+
+%}
+
+%%
+\/\/[^\n]*\n			{ 
+				}	
+[0-9]+                        {
+				yylval.intv = atoi(yytext); return INT_LITERAL;
+				}
+[0-9]+\.[0-9]+         		yylval.dblv = atof(yytext); return DOUBLE_LITERAL;
+->                            return PTR;
+==                              return OP_EQL;
+int                             return PDT_INT;
+char                            return PDT_CHAR;
+double                          return PDT_DOUBLE;
+bool                            return PDT_BOOL;
+void                            return PDT_VOID;
+if				return IF;
+else				return ELSE;
+while				return WHILE;
+return				return RETURN;
+true				return TRUE;
+false				return FALSE;
+break				return BREAK;
+continue			return CONTINUE;
+\"[^"]*\"            		{ 
+					yylval.strv = (char*)malloc(strlen(yytext)-1);
+					strc(yytext, yylval.strv); 
+					return STRING_LITERAL;
+				}
+'[a-zA-Z0-9\t\n]'		yylval.chrv = yytext[1]; return CHAR_LITERAL;
+[a-zA-Z]+[a-zA-Z0-9]*           return VAR_NAME;
+\.                              return OP_DOT;
+[ \t\n]+ 
+.				return (int)yytext[0];
+%%
+

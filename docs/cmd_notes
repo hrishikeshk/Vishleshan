@@ -1,0 +1,19 @@
+Plain Flex :
+
+all : ex
+
+ex : lex.yy.c
+        gcc lex.yy.c -o ex -lfl
+
+lex.yy.c : 
+        flex ex.fl
+
+clean :
+        rm -rf lex.yy.c
+        rm -rf ex
+
+----
+
+Flex + Bison
+
+
