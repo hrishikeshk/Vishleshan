@@ -72,8 +72,8 @@ stmts:
 		  	}
 	;
 stmt:
-	var_decl_init	{
-			}
+	var_decl_init ';'	{
+				}
 	|
 	fn_decl		{
 			}
