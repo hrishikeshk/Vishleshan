@@ -1,0 +1,44 @@
+1/ Scanner parser in place with limited functionality.
+	It has a C-like Syntax, with these limitations which are being removed in due course of time. The compiler features listed as limitations are being added in an iterative manner : 
+		These features are not (yet) supported : User-defined data-types in functions, bitwise and logical ops, unary minus, first class function - functions as arguments to functions, header includes and conditional compilation, References, Function prototyping, extern & static linkages, std library callouts,enums, typedefs, templates.
+
+2/ Semantic analysis and checking :
+
+These classes are important for semantic checking, but will be further useful during code generation. The Symbol Table is the central idea here. One set of classes is the set of Symbol tables, associated Scopes while there is another set to record static information about Types and Functions (Descriptors).
+
+Candidate classes to consider : 
+
+        Classes fall into categories : 
+        1/ Node structures : These are basically data types created for non-terminals. Most terminals can be sufficiently handled with primitive data types. 
+        2/ Scope : Represents structure to handle encapsulation of code.
+        3/ Descriptors : Done for data types. 
+        4/ Symbol_Tables : Is a mapping of strings with descriptors, designed to track actual instances of object/function instance declaration.
+
+        C_U : Topmost object is the Compilation unit (C_U). It represents the entire file along with all includes that is up for compilation. 
+
+        class Scope : A scope is any code structure that is delimited by the brace brackets, including looping constructs, functions and conditions. Each scope has an associated set of data types and functions with it : those that are defined within it.There is always a global scope at the global level directly associated with C_U. Each scope has a scope-identifier (can be uniquely generated integer id). Scope also has a reference to a local Symbol Table (for local variable declaration), function_symbol_table (only global scope has this, NULL otherwise), reference to parent_function (the function under which this code is being added, this will be NULL for Global scope). If the scope is actually a function declaration or definition then it also contains the parameter_symtab.
+        There is one object of this type Scope created for the global scope by default (id=0). For each scope created, a scope hierarchy is created in the form of a stack. A scope tree can be created as it can be useful in code generation.
+
+	Create a class for each token - some terminals as well as non-terminals. Each class should have a data-type and a semantic value. Type inference can be done bottom-up and type of terminals needs to be carried upwards to non-terminals like expressions. 
+
+	Data_Type designed to serve as a type descriptor (UDType, PDType and FPType). Type_List (List of Data_Types).
+        PDType : Denotes a primitive data type which can be int/char/double, bool They follow the sizes appropriate for the LP64 data model : int=4 bytes, char, bool=1 byte and double=8 bytes. The byte format of these data types will follow the same as the IEEE standard. PDType will first identify one of these four primitive data types, then have a size info.
+        UDType : Refers to a user defined data type. This can only be achieved using a struct. It contains a size value, a list of offsets in the Type_List to its component data types, that could be PDTypes or UDTypes. A UDType can be defined only in a Global Scope. 
+        FPType : Should be added for a First class function implementation. A FPType represents a function definition. It carries the source code of the function along with it and is fully identified by a function-name. A function may return a FPType just like any other data type. An FPType refers to a Local_Sym_Tab, Class_UDType (that could be empty for non-member functions) and a Param_SymTab.
+
+        Type_List is the list of available Primitive and User data types that are seen to be defined in the source. This is to serve the purpose of a class descriptor.
+
+	Each Data_Type refers to a offset in a Type_List (Detailed info for a Type).
+
+	Symbol tables are of kinds : Data_Member_SymTab, Function_Member_SymTab, Param_SymTab, Local_SymTab.
+        Data_Member_SymTab : Is a reference to a data_type within a UDType. Function_Member_SymTab is a reference to a function from within a UDType. Parameter_SymTab is associated only with a FPType. Local_SymTab can be associated with the Global scope or a FPType.
+
+	
+	Static design of the Symbol Table :
+        The Descriptor or Type describes just the static information about something but the Symbol Table is designed to serve as an instance of actual object. It also has a reference to the actual Data_Type as an offset within the Type_List. Each symbol must refer to the Scope in form of a scope-id.
+
+		Symbol table is a list of symbol objects. Index needed for scope-id and var_name.
+		Symbol Object is a structure referring to type_info, and any type description.
+		Classes : At least distinct objects of SymbolTable needed for :	Local_Symbol, Parameter_List_Symbol, Non-local (but active) symbols. Each of these is further divided into Data_Symbol and Function_Symbol.
+****debuginfo-install glibc-2.12-1.7.el6_0.5.x86_64 libgcc-4.4.4-13.el6.x86_64 libstdc++-4.4.4-13.el6.x86_64
+

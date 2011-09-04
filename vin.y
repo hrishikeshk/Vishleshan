@@ -1,8 +1,12 @@
 %{
 
 #include <stdio.h>
+#include<string.h>
+#include <assert.h>
+
 #include "sym_tab.h"
 #include "node_structs.h"
+
 
 int yyerror(const char* se){
 	printf("Parse Error : ");
@@ -26,15 +30,26 @@ int yydebug=1;
 	char*	strv;
 	char	chrv;
 	struct NodePtr* nptr;
+	struct Literal* lit;
+	struct Variable* var;
+	struct ArrayVariable* avar;
+	struct PDT*	pdt;
 }
 
-%token PTR PDT_INT PDT_CHAR PDT_DOUBLE PDT_BOOL PDT_VOID IF ELSE WHILE RETURN VAR_NAME OP_DOT OP_EQL TRUE FALSE STRUCT BREAK CONTINUE CHAR_LITERAL
+%token PTR PDT_INT PDT_CHAR PDT_DOUBLE PDT_BOOL PDT_VOID IF ELSE WHILE RETURN OP_DOT OP_EQL TRUE FALSE STRUCT BREAK CONTINUE
 
 %token <intv> INT_LITERAL
 %token <dblv> DOUBLE_LITERAL
 %token <strv> STRING_LITERAL
+%token <chrv> CHAR_LITERAL
+%token <strv> VAR_NAME
 
-%type <nptr> C_U stmts stmt pdt expr literal var var_decl fn_decl arg_list stmt_blk var_list fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list inr_var_list array_var
+%type <nptr> C_U stmts stmt expr var_decl fn_decl arg_list stmt_blk var_list fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list inr_var_list
+
+%type <lit> literal
+%type <var> var
+%type <avar> array_var
+%type <pdt> pdt
 
 %start C_U
 
@@ -47,7 +62,6 @@ int yydebug=1;
 
 C_U:
 	stmts     {
-			process_node(10);
 		  }
 	;
 stmts:
@@ -208,25 +222,47 @@ loop_cons:
 					}
         ;
 pdt: PDT_INT {
+		struct PDT* pPDT = create_pdt();
+		pPDT->epdt = INT;
+		$$=pPDT;
 	     }
      |
      PDT_DOUBLE {
+		struct PDT* pPDT = create_pdt();
+		pPDT->epdt = DOUBLE;
+		$$=pPDT;
 		}
      |
      PDT_BOOL  {
+		struct PDT* pPDT = create_pdt();
+		pPDT->epdt = BOOL;
+		$$=pPDT;
 	       }
      |
      PDT_VOID  {
+		struct PDT* pPDT = create_pdt();
+		pPDT->epdt = VOID;
+		$$=pPDT;
 	       }
      |
      PDT_CHAR   {
+		struct PDT* pPDT = create_pdt();
+		pPDT->epdt = CHAR;
+		$$=pPDT;
 		}
      ;
 array_var:
 	var '[' array_var ']'	{
+					struct ArrayVariable* pAV = create_avariable();
+					pAV->pAVar = $3;
+					pAV->pVar = $1;
+					$$=pAV;
 				}
 	|
 	var			{
+					struct ArrayVariable* pAV = create_avariable();
+					pAV->pVar = $1;
+					$$=pAV;
 				}
 	;
 expr: 
@@ -271,30 +307,69 @@ expr:
 	;
 var:	
 	var OP_DOT VAR_NAME  {
-			     }
-	|
-	var PTR VAR_NAME  {
+					struct Variable* pV = $1;
+					while(pV->pVar != NULL){
+						pV = pV->pVar;
+					}
+					struct Variable* pV2 = create_variable();
+					pV2->var_name=(char*)malloc(strlen($3)+1);
+					strcpy(pV2->var_name, $3);
+					pV2->var_name[strlen($3)] = '\0';
+					pV->pVar = pV2;
+					$$=pV;
 			     }
 	| 
 	VAR_NAME		{
+					struct Variable* pV = create_variable();
+					pV->var_name=(char*)malloc(strlen($1)+1);
+					strcpy(pV->var_name, $1);
+					pV->var_name[strlen($1)] = '\0';
+					$$=pV;
 				}
 	;
 literal: INT_LITERAL  {
+			struct Literal* pL = create_literal();
+			pL->vi = $1;
+			pL->epdt = INT;
+			$$ = pL;
 		   }
 	|
 	DOUBLE_LITERAL {
+			struct Literal* pL = create_literal();
+			pL->vd = $1;
+			pL->epdt = DOUBLE;
+			$$ = pL;
 			}
 	|
 	STRING_LITERAL {
+			struct Literal* pL = create_literal();
+			int len = strlen($1);
+			pL->vs = (char*)malloc(len+1);
+			strcpy(pL->vs, $1);
+			pL->vs[len] = '\0';
+			pL->epdt = STRING;
+			$$ = pL;
 			}
 	|
 	TRUE		{
+			struct Literal* pL = create_literal();
+			pL->vb = true;
+			pL->epdt = BOOL;
+			$$ = pL;
 			}
 	|
 	FALSE		{
+			struct Literal* pL = create_literal();
+			pL->vb = false;
+			pL->epdt = BOOL;
+			$$ = pL;
 			}
 	|
 	CHAR_LITERAL	{
+			struct Literal* pL = create_literal();
+			pL->vc = $1;
+			pL->epdt = CHAR;
+			$$ = pL;
 			}
 	;
 

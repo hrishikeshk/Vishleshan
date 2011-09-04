@@ -1,3 +1,6 @@
 Purely academic exploits.
 Foray into Compiler building using Flex, Bison, C++ and a bit of experimentation.
 
+We are trying to build a compiler that is based on C programming but with less than full features that a typical C program supports.  We want to make it with a different twist : To support these somewhat ambitious, exciting and novel features : Array bounds checking, Garbage collection, lazy evaluation, first class functions.
+
+The code that we will generate will be run on X86-64. It should be able to link and load with other standard libraries for X86-64.

@@ -43,12 +43,17 @@ false				return FALSE;
 break				return BREAK;
 continue			return CONTINUE;
 \"[^"]*\"            		{ 
-					yylval.strv = (char*)malloc(strlen(yytext)-1);
+					yylval.strv = (char*) malloc(strlen(yytext) - 1);
 					strc(yytext, yylval.strv); 
 					return STRING_LITERAL;
 				}
 '[a-zA-Z0-9\t\n]'		yylval.chrv = yytext[1]; return CHAR_LITERAL;
-[a-zA-Z]+[a-zA-Z0-9]*           return VAR_NAME;
+[a-zA-Z]+[a-zA-Z0-9]*           {
+					yylval.strv = (char*) malloc(strlen(yytext));
+					strcpy(yylval.strv, yytext);
+					yylval.strv[strlen(yytext)] = '\0';
+					return VAR_NAME;
+				}
 \.                              return OP_DOT;
 [ \t\n]+ 
 .				return (int)yytext[0];
