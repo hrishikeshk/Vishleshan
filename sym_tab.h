@@ -1,3 +1,5 @@
+#ifndef _SYM_TAB
+#define _SYM_TAB
 
 struct Symbol_Attr{
 
@@ -12,4 +14,7 @@ typedef struct SymbolTable{
 	Symbol* sym_head;	
 
 } Sym_Tab;
+
+
+#endif
 

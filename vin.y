@@ -1,11 +1,13 @@
 %{
 
 #include <stdio.h>
-#include<string.h>
+#include <string.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "sym_tab.h"
 #include "node_structs.h"
+#include "Scope.h"
 
 
 int yyerror(const char* se){
@@ -21,6 +23,12 @@ int yywrap(){
 
 int yydebug=1;
 
+Scope g_s;
+
+struct NodePtr c_u;
+
+Scope* pCurrent_Scope;
+
 %}
 
 %union {
@@ -34,6 +42,7 @@ int yydebug=1;
 	struct Variable* var;
 	struct ArrayVariable* avar;
 	struct PDT*	pdt;
+	struct Var_Decl*	pvd;
 }
 
 %token PTR PDT_INT PDT_CHAR PDT_DOUBLE PDT_BOOL PDT_VOID IF ELSE WHILE RETURN OP_DOT OP_EQL TRUE FALSE STRUCT BREAK CONTINUE
@@ -44,12 +53,13 @@ int yydebug=1;
 %token <chrv> CHAR_LITERAL
 %token <strv> VAR_NAME
 
-%type <nptr> C_U stmts stmt expr var_decl fn_decl arg_list stmt_blk var_list fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list inr_var_list
+%type <nptr> C_U stmts stmt expr fn_decl arg_list stmt_blk var_list fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list inr_var_list
 
 %type <lit> literal
 %type <var> var
 %type <avar> array_var
 %type <pdt> pdt
+%type <pvd> var_decl
 
 %start C_U
 
@@ -93,6 +103,10 @@ var_decl_init:
 	;
 var_decl:
 	pdt var		{
+				struct Var_Decl* pvd = create_var_decl();
+				pvd->pVar = $2;
+				pvd->pPDT = $1;
+				$$=pvd;
 			}
 	;
 var_decl_list:
@@ -376,6 +390,16 @@ literal: INT_LITERAL  {
 %%
 
 int main(int argc, char* argv[]){
+
+	g_s.scope_id = generate_id();
+	g_s.parent_scope_id = INT_MAX;
+	g_s.pLST = NULL;
+	g_s.pFST = NULL;
+
+	pCurrent_Scope = &g_s;
+
+	c_u.gs = g_s.scope_id;
+
 	yyparse();
 	return 0;
 }
