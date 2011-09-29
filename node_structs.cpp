@@ -40,3 +40,13 @@ struct Var_Decl* create_var_decl(){
 	return pvd;
 }
 
+struct Inr_Var_List* create_inr_var_list(){
+	struct Inr_Var_List* pivl = (Inr_Var_List*) malloc(sizeof(struct Inr_Var_List));
+	return pivl;
+}
+
+struct Var_List* create_var_list(){
+	struct Var_List* pvl = (Var_List*) malloc(sizeof(struct Var_List));
+	return pvl;
+}
+

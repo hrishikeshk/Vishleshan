@@ -43,6 +43,8 @@ Scope* pCurrent_Scope;
 	struct ArrayVariable* avar;
 	struct PDT*	pdt;
 	struct Var_Decl*	pvd;
+	struct Inr_Var_List*	ivl;
+	struct Var_List*	pvl;
 }
 
 %token PTR PDT_INT PDT_CHAR PDT_DOUBLE PDT_BOOL PDT_VOID IF ELSE WHILE RETURN OP_DOT OP_EQL TRUE FALSE STRUCT BREAK CONTINUE
@@ -53,13 +55,15 @@ Scope* pCurrent_Scope;
 %token <chrv> CHAR_LITERAL
 %token <strv> VAR_NAME
 
-%type <nptr> C_U stmts stmt expr fn_decl arg_list stmt_blk var_list fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list inr_var_list
+%type <nptr> C_U stmts stmt expr fn_decl arg_list stmt_blk fn_inv loop_cons var_decl_init ifx struct_decl inr_stmt_blk inr_arg_list
 
 %type <lit> literal
 %type <var> var
 %type <avar> array_var
 %type <pdt> pdt
 %type <pvd> var_decl
+%type <ivl> inr_var_list
+%type <pvl> var_list
 
 %start C_U
 
@@ -145,22 +149,72 @@ inr_arg_list:
         ;
 inr_var_list:
 	inr_var_list ',' var    {
+					struct Inr_Var_List* pivl = $1;
+					struct Variable* pIVar = $3;
+					struct inr_var* piv = (struct inr_var*) malloc(sizeof(struct inr_var));
+					piv->pVar = pIVar;
+					piv->pLit = NULL;
+					piv->pNext = NULL;
+
+					struct inr_var* pTmp = pivl->pinrv;
+					if(pTmp == NULL){
+						assert(0);
+					}
+					while(pTmp->pNext != NULL){
+						pTmp = pTmp->pNext;
+					}
+					pTmp->pNext = piv;
+					$$=pivl;
 			    }
 	|
 	var		    {
+					struct Inr_Var_List* pivl = create_inr_var_list();
+					struct inr_var* piv = (struct inr_var*) malloc(sizeof(struct inr_var));
+					piv->pVar = $1;
+					piv->pNext = NULL;
+					pivl->pinrv = piv;
+					$$=pivl;
 			    }
 	|
 	inr_var_list ',' literal    {
+					struct Inr_Var_List* pivl = $1;
+					struct Literal* pILit = $3;
+					struct inr_var* piv = (struct inr_var*) malloc(sizeof(struct inr_var));
+					piv->pVar = NULL;
+					piv->pLit = pILit;
+					piv->pNext = NULL;
+
+					struct inr_var* pTmp = pivl->pinrv;
+					if(pTmp == NULL){
+						assert(0);
+					}
+					while(pTmp->pNext != NULL){
+						pTmp = pTmp->pNext;
+					}
+					pTmp->pNext = piv;
+					$$=pivl;
 			    }
 	|
 	literal		{
+					struct Inr_Var_List* pivl = create_inr_var_list();
+					struct inr_var* piv = (struct inr_var*) malloc(sizeof(struct inr_var));
+					piv->pLit = $1;
+					piv->pNext = NULL;
+					pivl->pinrv = piv;
+					$$=pivl;
 			}
 	;
 var_list:
 	'(' inr_var_list ')'	{
+					struct Var_List* pvl = create_var_list();
+					pvl->pivl = $2;
+					$$ = pvl;
 				}
 	|
 	'(' ')'			{
+					struct Var_List* pvl = create_var_list();
+					pvl->pivl = NULL;
+					$$ = pvl;
 				}
 	;
 fn_inv:
