@@ -16,8 +16,9 @@ Candidate classes to consider :
 
         Classes fall into categories : 
         1/ Node structures : These are basically data types created for non-terminals. Most terminals can be sufficiently handled with primitive data types. 
-        2/ Scope : Represents structure to handle encapsulation of code.
-        3/ Descriptors : Done for data types as well as functions. 
+        2/ Scope : Represents structure to handle encapsulation of code. Scope
+objects come in hierarchies. A scope can have a list of snclosed scopes.
+        3/ Descriptors : Serves as a static description, Done for data types as well as functions. 
         4/ Symbol_Tables : Is a mapping of strings with descriptors, designed to track actual instances of object/function instance declaration.
 
         C_U : Topmost object is the Compilation unit (C_U). It represents the entire file along with all includes that is up for compilation. 
@@ -25,7 +26,7 @@ Candidate classes to consider :
         class Scope : A scope is any code structure that is delimited by the brace brackets, including looping constructs, functions and conditions. Each scope has an associated set of data types and functions with it : those that are defined within it.There is always a global scope at the global level directly associated with C_U. Each scope has a scope-identifier (can be uniquely generated integer id). Scope also has a reference to a local Symbol Table (for local variable declaration), function_symbol_table (only global scope has this, NULL otherwise), reference to parent_function (the function under which this code is being added, this will be NULL for Global scope) and also to the parent scope. If the scope is actually a function declaration or definition then it also contains the parameter_symtab.
         There is one object of this type Scope created for the global scope by default (id=0). For each scope created, a scope hierarchy is created in the form of a stack. A scope tree can be created as it can be useful in code generation.
 
-	Create a class for each token - some terminals as well as non-terminals. Each token class should have a data-type and a semantic value. Type inference can be done bottom-up and type of terminals needs to be carried upwards to non-terminals like expressions. 
+	Create a class for each token - some terminals as well as all non-terminals. Each token class should have a data-type and a semantic value. Type inference can be done bottom-up and type of terminals needs to be carried upwards to non-terminals like expressions. 
 
 	Data_Type designed to serve as a type descriptor (UDType, PDType and FPType). Type_List (List of Data_Types).
         PDType : Denotes a primitive data type which can be int/char/double, bool They follow the sizes appropriate for the LP64 data model : int=4 bytes, char, bool=1 byte and double=8 bytes. The byte format of these data types will follow the same as the IEEE standard. PDType will first identify one of these four primitive data types, then have a size info.
