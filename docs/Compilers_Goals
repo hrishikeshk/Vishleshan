@@ -1,0 +1,108 @@
+Compilers : Introduction -
+
+Compilers should be called as one magnitude of improvement in software technology, unparalleled by anything else. Offers the proverbial "Silver Bullet" that we seem to have already consumed and outgrown. Software to convert high level, expressive code into machine language, specifc to a machine architecture.
+
+TODO : User-defined data-types in functions, bitwise and logical ops, unary minus, first class function - functions as arguments to functions, header includes and conditional compilation, References, Function prototyping, extern & static linkages, std library callouts,enums, typedefs, templates.
+
+----
+Desirable features : Array bounds checking, Garbage collection, lazy evaluation, first class functions.
+Steps : Scanning (Lexical analysis)
+                Parsing (Syntactical analysis)
+                Type checking
+                Code optimization
+                Code generation.
+
+Tokens are made out of lexemes that are inputs relevant to the lexer. A token consists of a token name (a symbol) and an attribute value(a pointer to a table having more information). Practically a token maps to a Terminal. 
+
+-
+Flex usages : 
+Useful regex patterns for Flex present in Flex manual. 
+
+For C++ : 
+1/ Keywords and Operators to be copied as is. 
+        List of keywords : if, while, else, else if,struct,class, main, for, virtual, switch, case,static, const, public, private, protected
+        List of operators : +,-,*,/,&,%,!,~,=,==,EX-OR,GT,LT,COLON, SEMICOLON, DOT, POINTER.
+        Primitive datatypes : int, double, char, bool, void.
+2/ 
+%%
+
+\/\/[^\n]*\n            printf("SL_COMMENT");
+0[0-7]+                       printf("OCT_LITERAL");
+[0-9]+                          printf("INT_LITERAL");
+0x[0-9A-Fa-f]+        printf("HEX_LITERAL");
+[0-9]+\.[0-9]+         printf("DOUBLE_LITERAL");
+\{                             printf("OP_BRACE");
+\}                             printf("EN_BRACE");
+\(                             printf("OP_CUBRACK");
+\)                             printf("EN_CUBRACK");
+\[                             printf("OP_SQBRACK");
+\]                             printf("EN_SQBRACK");
+->                            printf("PTR");
+,                               printf("COMMA");
+;                               printf("SEMICOLON");
+main                            printf("F_MAIN");
+int                             printf("PDT_INT");
+char                            printf("PDT_CHAR");
+double                          printf("PDT_DOUBLE");
+bool                            printf("PDT_BOOL");
+void                            printf("PDT_VOID");
+if                              printf("IF");
+else                            printf("ELSE");
+while                           printf("WHILE");
+do                              printf("DO");
+for                             printf("FOR");
+return                          printf("RETURN");
+\"[^"]*\"            printf("STRING_LITERAL"); printf(yytext);
+[a-zA-Z]+[a-zA-Z0-9]*           printf("VARIABLE_NAME");
+\+                              printf("OP_ADD");
+\-                              printf("OP_SUB");
+\*                                printf("OP_PTR_MUL");
+\/                              printf("OP_DIV");
+&                               printf("OP_AMP");
+%                               printf("OP_MOD");
+!                               printf("OP_NOT");
+~                               printf("OP_BNO");
+=                               printf("OP_ASN");
+==                              printf("OP_EQL");
+\^                              printf("OP_XOR");
+>                               printf("OP_GT");
+\<                               printf("OP_LT");
+::                               printf("OP_SCO");
+:                               printf("OP_COL");
+\.                              printf("OP_DOT");
+\"                            printf("DBL_QUOTE");
+\\n                              printf("NEWLINE");
+[ \t\n]+
+%%
+
+----
+
+preprocessor features : 
+#if defined __USE_UNIX98 || defined __USE_XOPEN2K
+-
+# define PTHREAD_RWLOCK_INITIALIZER \
+  { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+-
+#ifdef
+#else
+#endif
+-
+#undef
+-
+#  if __WORDSIZE == 64
+-
+#ifndef xyz
+-
+#if !defined __need_FILE && !defined __need___FILE
+-
+----
+
+flex features : 1/ yymore() -> Calling yymore() in actions will append the next match in the current yytext as well. Use and modify yyleng appropriately, therefore yyleng cannot be modified in conjunction with using yymore().
+                        2/ yyless(n) -> return all but the first n chars back into input stream. unput(char) to put back one char into input stream.
+                        3/ REJECT; -> a special directive asking flex to proceed to match the next best/available match.
+                        
+Bison : Relevant keywords : Statement, Expression.
+
+----
+SL_COMMENT OCT_LITERAL INT_LITERAL HEX_LITERAL DOUBLE_LITERAL OP_BRACE EN_BRACE OP_CUBRACK EN_CUBRACK OP_SQBRACK EN_SQBRACK PTR COMMA SEMICOLON F_MAIN PDT_INT PDT_CHAR PDT_DOUBLE PDT_BOOL PDT_VOID IF ELSE WHILE DO FOR RETURN STRING_LITERAL VARIABLE_NAME OP_ADD OP_SUB OP_PTR_MUL OP_DIV OP_AMP OP_MOD OP_NOT OP_BNO OP_ASN OP_EQL OP_XOR OP_GT OP_LT OP_SCO OP_COL OP_DOT DBL_QUOTE NEWLINE
+----

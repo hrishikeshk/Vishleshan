@@ -1,5 +1,5 @@
 
-These are purely academic exploits. My foray into Compiler building using Flex, Bison, C++ and lots of experimentation.
+These are purely academic exploits. My foray into Compiler building using Flex, Bison, C++ and lots of experimentation. Building some useful utilities, data-structures and algorithms along the way.
 
 We are trying to build a compiler that supports a 'Turing Complete' language similar to 'ANSI C' but with less than full features that a typical C program supports. We want to make it work with a different twist : To support these somewhat ambitious, exciting and novel features : 
 - Array bounds checking
