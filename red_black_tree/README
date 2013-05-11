@@ -1,0 +1,4 @@
+This is specifically about implementing a red-black tree, that is certain to be heavily used in a larger context. Several implementations are already available. However, the goal here is two-fold :
+1/ Implement a tree that is purely 'offset-based'. Thus, using pointers as links in this structure is eliminated. All links are represented as 4 byte numbers or offsets. This helps in ensuring that the tree does not consume more memory on 64-bit OS and the memory consumed does not change based on the OS architecture.
+
+2/ Define a way to use this tree as an index. The 'container' that is used to hold the list of objects to be searched does not have to be hard-linked to the index. The container only needs to support an const form of the array index operator. The index too should not store any information about the objects, apart from a single 4 byte offset so no copying of the satellite data is forced for using the index.
