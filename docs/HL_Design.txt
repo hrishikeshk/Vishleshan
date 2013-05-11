@@ -48,7 +48,3 @@ objects come in hierarchies. A scope can have a list of snclosed scopes.
 		Symbol Object is a structure referring to type_info, and any type description.
 		Classes : At least distinct objects of SymbolTable needed for :	Local_Symbol, Parameter_List_Symbol, Non-local (but active) symbols. Each of these is further divided into Data_Symbol and Function_Symbol.
 
-
-
-****debuginfo-install glibc-2.12-1.7.el6_0.5.x86_64 libgcc-4.4.4-13.el6.x86_64 libstdc++-4.4.4-13.el6.x86_64
-

@@ -1,0 +1,83 @@
+PURPOSE :
+
+This is an overall design statement for the Red Black Tree implementation.
+
+Introduction :
+
+	This RBTree implementation uses 4 byte integers (offsets) as links to 
+parent and child nodes instead of pointers. Also, only 4 byte offsets that
+reference objects in a list are stored in the index and satellite data for
+the objects is neither stored nor copied. 
+
+The way to use this is as follows:
+
+1/ Create your own list of objects, that includes all satellite data that you
+need to store along with some indentifying (key) attribute of those objects.
+
+2/ Create a new class that inherits from the class 'Key' and implements a
+function compare(). This class should maintain references to the list of
+objects and one actual key attribute. The function compare() should use the
+passed offset and the referenced list to first find the object to compare
+with, and then do the comparison.
+
+3/ Use the Key and RBTree interfaces to insert objects into the index after
+saving each one at some offset in your list.
+
+4/ To search for objects, create an object of sub-type of 'Key' and use the
+RBTree interface to locate the offset of the object in your list.
+
+
+Public Interfaces :
+
+	This indexing functionality has two interfaces that are to be utilized by the client classes.
+	1/ Key : The Key is an abstract class that is designed to serve as the base class for Keys defined by the client classes. The client class must implement the function compare() and return the result of comparison with whatever key is passed as input argument. 
+
+		virtual Key::RBStatus compare(UInt32 cmp_ox) = 0;
+
+	2/ RBTree : Offers functions to insert uniquely an object's offset in
+a RBTree, finding the objects already stored and also deletion.
+
+Static Data Model :
+
+	The class 'Key' does not store any member data.
+
+	The class 'RBNode' serves as the node of the Red Black tree and needs
+to save data necessary for RBTree algorithms. There are 4 pieces of
+information saved here : enum color and 4-byte offsets for parent, left and
+right child nodes. Finally an offset representing the client's data is also
+stored.
+
+	The class 'RBTree' saves the information about the offset of the root
+of the tree. Secondly, it also saves a vector of RBNodes.
+
+
+Dynamic Data Model :
+
+	The standard algorithms for implementation of the RBTree are to be
+followed. 
+	The integrated indexing framework implies this flow :
+	Insertion -
+	a/ Take a Key and an offset to be inserted uniquely into the RBTree.
+	b/ Invoke the Key::compare() and pass the offset encountered with
+RBNodes already saved in the index. Depending on what is returned, traverse to
+left or right child node in the RBTree. If the Key is not unique, return
+appropiately. Else insert the offset passed in RBTree using the standard algorithm when the
+traveral reaches the sentinel 'NIL' node.
+
+	Search -
+	Searching uses the same steps as insertion, and again uses the same
+compare() invocations to traverse to the desired node. The offset stored with
+the RBNode is returned.
+
+
+Unit Tests :
+
+	The unit testing should do a systematic insertion of a permutation of
+objects into the tree to test insertion and then deletion again in permutation. The number of objects permuted for this test should be all numbers in the range [1-7]. The result verification should happen after each RBTree operation.
+
+	The insertion and deletion steps should then happen for 
+interleavings between insert and delete operations. 
+
+Benchmarks : TODO
+
+
