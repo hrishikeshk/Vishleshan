@@ -28,6 +28,10 @@ class RBTree{
 	void rb_insert_fixup(const UInt32& new_node_ox);
 
 	void rb_delete_fixup(const UInt32& del_node_ox);
+
+	void left_rotate(const UInt32& node_ox);
+
+	void right_rotate(const UInt32& node_ox);
 };
 
 #endif
