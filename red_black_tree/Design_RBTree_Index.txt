@@ -1,6 +1,7 @@
 PURPOSE :
 
-This is an overall design statement for the Red Black Tree implementation.
+This is an overall design statement for a Red Black Tree implementation
+suitable for use as an index into a linear storage container.
 
 Introduction :
 
@@ -9,7 +10,7 @@ parent and child nodes instead of pointers. Also, only 4 byte offsets that
 reference objects in a list are stored in the index and satellite data for
 the objects is neither stored nor copied. 
 
-The way to use this is as follows:
+The way to use this index is as follows:
 
 1/ Create your own list of objects, that includes all satellite data that you
 need to store along with some indentifying (key) attribute of those objects.
@@ -25,6 +26,11 @@ saving each one at some offset in your list.
 
 4/ To search for objects, create an object of sub-type of 'Key' and use the
 RBTree interface to locate the offset of the object in your list.
+
+Dependencies :
+	1/ std::vector<> available with the Boost Library.
+	2/ Tested on CentOS Linux 64-bit OS, gcc 4.4.7, but this should work
+elsewhere.
 
 
 Public Interfaces :

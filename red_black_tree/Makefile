@@ -14,7 +14,7 @@ FPIC_OBJ=-fPIC
 rbtree.so: rbtree.o
 	$(CC) $(WARN) $(DEBUG) $(SHAREDLIB_FLAGS) -o rbtree.so rbtree.o
 
-rbtree.o: RBNode.h Key.h
+rbtree.o: RBTree.cpp RBNode.h Key.h RBTree.h
 	$(CC) $(WARN) $(DEBUG) $(INCLUDES) $(FPIC_OBJ) -o rbtree.o -c RBTree.cpp 
 
 .PHONY: clean

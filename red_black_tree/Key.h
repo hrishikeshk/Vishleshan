@@ -3,14 +3,14 @@
 
 #include "TypeDefs.h"
 
-enum RBStatus { LESS, EQUAL_TO, MORE };
+enum RBStatus { LESS, EQUAL, MORE };
 
 class Key{
 	public:
 		virtual ~Key(){
 		}
 
-		virtual RBStatus compare(const UInt32 cpm_ox) = 0;
+		virtual RBStatus compare(const UInt32 cpm_ox) const = 0;
 };
 
 #endif
