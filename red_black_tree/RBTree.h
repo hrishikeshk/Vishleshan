@@ -32,6 +32,8 @@ class RBTree{
 	void left_rotate(const UInt32& node_ox);
 
 	void right_rotate(const UInt32& node_ox);
+
+	UInt32 tree_successor(const UInt32& node_ox) const;
 };
 
 #endif

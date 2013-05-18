@@ -3,6 +3,7 @@
 
 #include "Key.h"
 #include "RBTree.h"
+#include "Common_Funcs.h"
 
 
 Bool RBTree::find_element(const Key& k, UInt32& ref_ox) const{
@@ -136,6 +137,37 @@ void RBTree::rb_insert_fixup(const UInt32& new_node_ox){
 
 Bool RBTree::delete_element(const Key& k){
 
+	UInt32 del_node_ox;
+	Bool ret = find_element(k, del_node_ox);
+	if(ret == false || del_node_ox == maxUInt32)
+		return false;
+
+	UInt32 node_succ_ox, child_succ_ox;
+	if(m_nodes[del_node_ox].m_left_ox == maxUInt32 || 
+		m_nodes[del_node_ox].m_right_ox == maxUInt32){
+
+		node_succ_ox = del_node_ox;
+	}
+	else{
+		node_succ_ox = tree_successor(del_node_ox);
+	}
+	v_assert(node_succ_ox != maxUInt32, "Unexpected : node_succ offset is NIL");
+	
+	if(m_nodes[node_succ_ox].m_left_ox != maxUInt32){
+		child_succ_ox = m_nodes[node_succ_ox].m_left_ox;
+	}
+	else{
+		child_succ_ox = m_nodes[node_succ_ox].m_right_ox;
+	}
+	if(child_succ_ox != maxUInt32){
+		m_nodes[child_succ_ox].m_parent_ox = m_nodes[node_succ_ox].m_parent_ox;
+	}
+	if(m_nodes[node_succ_ox].m_parent_ox == maxUInt32){
+		m_root_ox = child_succ_ox;
+	}
+	else{
+		
+	}
 	return true;
 }
 
@@ -145,6 +177,8 @@ void RBTree::rb_delete_fixup(const UInt32& del_node_ox){
 
 void RBTree::left_rotate(const UInt32& node_ox){
 
+	if(node_ox == maxUInt32)
+		return;
 	UInt32 right_curr_ox = m_nodes[node_ox].m_right_ox;
 	if(right_curr_ox == maxUInt32)
 		return;
@@ -173,6 +207,8 @@ void RBTree::left_rotate(const UInt32& node_ox){
 
 void RBTree::right_rotate(const UInt32& node_ox){
 
+	if(node_ox == maxUInt32)
+		return;
 	UInt32 left_curr_ox = m_nodes[node_ox].m_left_ox;
 	if(left_curr_ox == maxUInt32)
 		return;
@@ -197,5 +233,31 @@ void RBTree::right_rotate(const UInt32& node_ox){
 	}
 	m_nodes[left_curr_ox].m_right_ox = node_ox;
 	m_nodes[node_ox].m_parent_ox = left_curr_ox;
+}
+
+UInt32 RBTree::tree_successor(const UInt32& node_ox) const{
+
+	if(node_ox == maxUInt32)
+		return node_ox;
+	UInt32 candidate_ox = m_nodes[node_ox].m_right_ox;
+	if(candidate_ox != maxUInt32){
+		UInt32 next_ox = m_nodes[candidate_ox].m_left_ox;
+		while(next_ox != maxUInt32){
+			candidate_ox = next_ox;
+			next_ox = m_nodes[candidate_ox].m_left_ox;
+		}
+	}
+	else{
+		UInt32 curr_node_ox = node_ox;
+		candidate_ox = m_nodes[curr_node_ox].m_parent_ox;
+		while(candidate_ox != maxUInt32){
+			if(m_nodes[candidate_ox].m_left_ox == curr_node_ox){
+				return candidate_ox;
+			}
+			curr_node_ox = candidate_ox;
+			candidate_ox = m_nodes[candidate_ox].m_parent_ox;
+		}
+	}
+	return candidate_ox;
 }
 
