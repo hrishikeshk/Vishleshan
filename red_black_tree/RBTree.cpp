@@ -166,7 +166,20 @@ Bool RBTree::delete_element(const Key& k){
 		m_root_ox = child_succ_ox;
 	}
 	else{
-		
+		if(node_succ_ox == m_nodes[m_nodes[node_succ_ox].m_parent_ox].m_left_ox){
+			m_nodes[m_nodes[node_succ_ox].m_parent_ox].m_left_ox = child_succ_ox;
+		}
+		else{
+			m_nodes[m_nodes[node_succ_ox].m_parent_ox].m_right_ox = child_succ_ox;
+		}
+	}
+	if(node_succ_ox != del_node_ox){
+		m_nodes[del_node_ox] = m_nodes[node_succ_ox];
+		m_nodes[node_succ_ox].m_next_free_ox = m_first_free_ox;
+		m_first_free_ox = node_succ_ox;
+	}
+	if(m_nodes[node_succ_ox].m_color == BLACK){
+		rb_delete_fixup(child_succ_ox);
 	}
 	return true;
 }
