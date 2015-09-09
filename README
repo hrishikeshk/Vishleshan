@@ -1,13 +1,13 @@
 
 These are purely academic exploits. My foray into Compiler building using Flex, Bison, C++ and lots of experimentation. Building some useful utilities, data-structures and algorithms along the way.
 
-We are trying to build a compiler that supports a 'Turing Complete' language similar to 'ANSI C' but with less than full features that a typical C program supports. We want to make it work with a different twist : To support these somewhat ambitious, exciting and novel features : 
+We are trying to build a compiler that supports a 'Turing Complete' language, syntactically similar to 'ANSI C' but with less than full features that a typical C program supports. We want to make it work with a different twist : To support these somewhat ambitious, exciting and novel features : 
 - Array bounds checking
 - Garbage collection
 - Lazy evaluation, 
 - First class functions
 - Tail recursion. 
-- We really want to go all the way to touch the Holy Grail of Compilation : automatically parallelized code generation.
+- Holy Grail ... generating parallelized code.
 
 The language should be 'safer' to use than what 'C', so it should do stuff such as, but not limited to, array bounds checking, garbage collection. We also want to eliminate the 'undefined' specifications, so that any given program has a deterministic output on all supported architectures.
 There should be support for a functional paradigm too. 
